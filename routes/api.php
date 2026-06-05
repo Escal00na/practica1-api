@@ -7,12 +7,24 @@ use App\Http\Controllers\ProductoController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+/*
+|--------------------------------------------------------------------------
+| Rutas públicas
+|--------------------------------------------------------------------------
+*/
+
+Route::apiResource('productos', ProductoController::class);
+
+/*
+|--------------------------------------------------------------------------
+| Rutas protegidas
+|--------------------------------------------------------------------------
+*/
+
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::get('/me', [AuthController::class, 'me']);
-
-    Route::apiResource('productos', ProductoController::class);
 
 });
