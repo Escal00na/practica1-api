@@ -7,45 +7,64 @@ use Illuminate\Http\Request;
 
 class ProductoController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        return response()->json(Producto::all(), 200);
+        $productos = Producto::all();
+
+        $productos->transform(function ($producto) {
+            $producto->imagen_url = $producto->imagen
+                ? asset('storage/' . $producto->imagen)
+                : null;
+
+            return $producto;
+        });
+
+        return response()->json($productos);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $producto = Producto::create($request->all());
+        $request->validate([
+            'nombre' => 'required|string',
+            'descripcion' => 'nullable|string',
+            'precio' => 'required|numeric',
+            'stock' => 'nullable|integer',
+            'imagen' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048'
+        ]);
+
+        $data = $request->except('imagen');
+
+        if ($request->hasFile('imagen')) {
+            $data['imagen'] = $request
+                ->file('imagen')
+                ->store('productos', 'public');
+        }
+
+        $producto = Producto::create($data);
+
+        $producto->imagen_url = $producto->imagen
+            ? asset('storage/' . $producto->imagen)
+            : null;
 
         return response()->json($producto, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Producto $producto)
     {
-        return response()->json($producto, 200);
+        $producto->imagen_url = $producto->imagen
+            ? asset('storage/' . $producto->imagen)
+            : null;
+
+        return response()->json($producto);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Producto $producto)
     {
         $producto->update($request->all());
 
-        return response()->json($producto, 200);
+        return response()->json($producto);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Producto $producto)
     {
         $producto->delete();
