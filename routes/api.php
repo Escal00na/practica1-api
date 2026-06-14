@@ -1,11 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductoController;
 
 Route::post('/register', [AuthController::class, 'register']);
-Route::post('/login', [AuthController::class, 'login']);
+Route::post('/login', [AuthController::class, 'login']);    
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,13 @@ Route::apiResource('productos', ProductoController::class);
 | Rutas protegidas
 |--------------------------------------------------------------------------
 */
+
+Route::apiResource('categorias', CategoriaController::class);
+
+Route::get(
+    'categorias/{categoria}/productos',
+    [CategoriaController::class, 'productos']
+);
 
 Route::middleware('auth:sanctum')->group(function () {
 

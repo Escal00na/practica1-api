@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use App\Models\Categoria;
 
 class Producto extends Model
 {
@@ -11,6 +13,12 @@ class Producto extends Model
         'descripcion',
         'precio',
         'stock',
-        'imagen'
+        'imagen',
+        'categoria_id'
     ];
+
+    public function categoria()
+    {
+        return $this->belongsTo(Categoria::class);
+    }
 }
